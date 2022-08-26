@@ -7,12 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 
 class Clock extends StatelessWidget {
-  const Clock({Key? key}) : super(key: key);
+  final Function(DateTime) onTimeUpdate;
+  const Clock({Key? key, required this.onTimeUpdate}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ClockController>(
-        init: ClockController(),
+        init: ClockController(onTimeUpdate: onTimeUpdate),
         builder: (controller) {
           return AspectRatio(
             aspectRatio: 1,
@@ -22,7 +23,16 @@ class Clock extends StatelessWidget {
                 Stack(
                   alignment: Alignment.center,
                   children: [
-                    const ClockHandHour(),
+                    ClockHandHour(
+                      angle: controller.hourAngle,
+                      onPanStart: (details, centerOfGestureDetector) =>
+                          controller.onHourPandStart(
+                              details, centerOfGestureDetector),
+                      onPanEnd: (details) => controller.onHourPanEnd(),
+                      onPanUpdate: (details, centerOfGestureDetector) =>
+                          controller.onHourPanUpdate(
+                              details, centerOfGestureDetector),
+                    ),
                     ClockHandMinute(
                       angle: controller.minAngle,
                       onPanStart: (details, centerOfGestureDetector) =>

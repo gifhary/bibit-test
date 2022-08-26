@@ -15,8 +15,12 @@ class HomeScreen extends StatelessWidget {
         padding: const EdgeInsets.all(30),
         child: SingleChildScrollView(
           child: Column(
-            children: const [
-              Clock(),
+            children: [
+              Clock(
+                onTimeUpdate: (p0) {
+                  debugPrint(p0.toString());
+                },
+              ),
             ],
           ),
         ),

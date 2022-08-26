@@ -28,6 +28,10 @@ class ClockHandMinute extends StatelessWidget {
               child: Stack(
                 alignment: Alignment.topCenter,
                 children: [
+                  Container(
+                    color: Colors.black,
+                    width: 7,
+                  ),
                   LayoutBuilder(builder: (context, constraints) {
                     Offset centerOfGestureDetector =
                         Offset(15 / 2, constraints.maxHeight);
@@ -48,10 +52,6 @@ class ClockHandMinute extends StatelessWidget {
                       ),
                     );
                   }),
-                  Container(
-                    color: Colors.black,
-                    width: 7,
-                  ),
                 ],
               ),
             ),

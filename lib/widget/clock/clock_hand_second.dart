@@ -28,6 +28,10 @@ class ClockHandSecond extends StatelessWidget {
               child: Stack(
                 alignment: Alignment.topCenter,
                 children: [
+                  Container(
+                    color: Colors.red,
+                    width: 4,
+                  ),
                   LayoutBuilder(builder: (context, constraints) {
                     Offset centerOfGestureDetector =
                         Offset(15 / 2, constraints.maxHeight);
@@ -49,10 +53,6 @@ class ClockHandSecond extends StatelessWidget {
                       ),
                     );
                   }),
-                  Container(
-                    color: Colors.red,
-                    width: 4,
-                  ),
                 ],
               ),
             ),
