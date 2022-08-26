@@ -6,14 +6,15 @@ class ClockController extends GetxController {
   double secOldAngle = 0;
   double secAngleDelta = 0;
 
-  int mincAngle = 0;
-  int minOldAngle = 0;
-  int minAngleDelta = 0;
+  double minAngle = 0;
+  double minOldAngle = 0;
+  double minAngleDelta = 0;
 
-  int hourAngle = 0;
-  int hourOldAngle = 0;
-  int hourAngleDelta = 0;
+  double hourAngle = 0;
+  double hourOldAngle = 0;
+  double hourAngleDelta = 0;
 
+//scond drag functions
   onSecPandStart(DragStartDetails details, Offset centerOfGestureDetector) {
     final touchPositionFromCenter =
         details.localPosition - centerOfGestureDetector;
@@ -23,7 +24,7 @@ class ClockController extends GetxController {
   onSecPanEnd() {
     secOldAngle = secAngle;
     update();
-    debugPrint('pan end $secAngle');
+    debugPrint('second pan end $secAngle');
   }
 
   onSecPanUpdate(DragUpdateDetails details, Offset centerOfGestureDetector) {
@@ -31,6 +32,27 @@ class ClockController extends GetxController {
         details.localPosition - centerOfGestureDetector;
 
     secAngle = touchPositionFromCenter.direction + secAngleDelta;
+    update();
+  }
+
+//minute drag functions
+  onMinPandStart(DragStartDetails details, Offset centerOfGestureDetector) {
+    final touchPositionFromCenter =
+        details.localPosition - centerOfGestureDetector;
+    minAngleDelta = minOldAngle - touchPositionFromCenter.direction;
+  }
+
+  onMinPanEnd() {
+    minOldAngle = minAngle;
+    update();
+    debugPrint('minute pan end $minAngle');
+  }
+
+  onMinPanUpdate(DragUpdateDetails details, Offset centerOfGestureDetector) {
+    final touchPositionFromCenter =
+        details.localPosition - centerOfGestureDetector;
+
+    minAngle = touchPositionFromCenter.direction + minAngleDelta;
     update();
   }
 }

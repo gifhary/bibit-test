@@ -23,7 +23,16 @@ class Clock extends StatelessWidget {
                   alignment: Alignment.center,
                   children: [
                     const ClockHandHour(),
-                    const ClockHandMinute(),
+                    ClockHandMinute(
+                      angle: controller.minAngle,
+                      onPanStart: (details, centerOfGestureDetector) =>
+                          controller.onMinPandStart(
+                              details, centerOfGestureDetector),
+                      onPanEnd: (details) => controller.onMinPanEnd(),
+                      onPanUpdate: (details, centerOfGestureDetector) =>
+                          controller.onMinPanUpdate(
+                              details, centerOfGestureDetector),
+                    ),
                     ClockHandSecond(
                       angle: controller.secAngle,
                       onPanStart: (details, centerOfGestureDetector) =>
