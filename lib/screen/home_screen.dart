@@ -1,5 +1,5 @@
 import 'package:bibit_clock/widget/clock/clock.dart';
-import 'package:bibit_clock/widget/est.dart';
+
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -17,7 +17,6 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             children: const [
               Clock(),
-              SizedBox(height: 300, child: Est()),
             ],
           ),
         ),
