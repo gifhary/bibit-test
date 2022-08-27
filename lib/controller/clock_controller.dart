@@ -46,7 +46,7 @@ class ClockController extends GetxController {
     minAngle = now.minute * 6 * math.pi / 180;
     minOldAngle = minAngle;
 
-    hourAngle = now.hour * 30 * math.pi / 180;
+    hourAngle = (now.hour > 12 ? now.hour % 12 : now.hour) * 30 * math.pi / 180;
     hourOldAngle = hourAngle;
   }
 
