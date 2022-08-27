@@ -3,7 +3,7 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'dart:math' as math;
 
 class ClockController extends GetxController {
-  late Function(DateTime) onTimeUpdate;
+  late Function(int hour, int minute, int second) onTimeUpdate;
 
   double secAngle = 0;
   double secOldAngle = 0;
@@ -17,7 +17,8 @@ class ClockController extends GetxController {
   double hourOldAngle = 0;
   double hourAngleDelta = 0;
 
-  ClockController({required Function(DateTime) onTimeUpdate}) {
+  ClockController(
+      {required Function(int hour, int minute, int second) onTimeUpdate}) {
     // ignore: prefer_initializing_formals
     this.onTimeUpdate = onTimeUpdate;
   }
@@ -26,6 +27,14 @@ class ClockController extends GetxController {
   onInit() {
     super.onInit();
     _initCurrentTime();
+  }
+
+  _updateTime() {
+    int hour = int.parse(((hourAngle * 180 / math.pi) / 30).toStringAsFixed(0));
+    int minute = int.parse(((minAngle * 180 / math.pi) / 6).toStringAsFixed(0));
+    int second = int.parse(((secAngle * 180 / math.pi) / 6).toStringAsFixed(0));
+
+    onTimeUpdate(hour, minute, second);
   }
 
   _initCurrentTime() {
@@ -41,6 +50,36 @@ class ClockController extends GetxController {
     hourOldAngle = hourAngle;
   }
 
+  double _limitTo60Tick(double angle) {
+    int angleIn60Tick =
+        int.parse(((angle * 180 / math.pi) / 6).toStringAsFixed(0));
+
+    //sometimes when the hands turned backward, the value received is negative number
+    //this to fix the negative number
+    if (angleIn60Tick < 0) {
+      angleIn60Tick = 60 + angleIn60Tick;
+    }
+
+    if (angleIn60Tick >= 60) {
+      return (angleIn60Tick % 60) * 6 * math.pi / 180;
+    }
+    return angleIn60Tick * 6 * math.pi / 180;
+  }
+
+  double _limitTo12Tick(double angle) {
+    int angleIn12Tick =
+        int.parse(((angle * 180 / math.pi) / 30).toStringAsFixed(0));
+
+    if (angleIn12Tick < 0) {
+      angleIn12Tick = 12 + angleIn12Tick;
+    }
+
+    if (angleIn12Tick > 12) {
+      return (angleIn12Tick % 12) * 30 * math.pi / 180;
+    }
+    return angleIn12Tick * 30 * math.pi / 180;
+  }
+
 //scond drag functions
   onSecPandStart(DragStartDetails details, Offset centerOfGestureDetector) {
     final touchPositionFromCenter =
@@ -51,8 +90,7 @@ class ClockController extends GetxController {
   onSecPanEnd() {
     secOldAngle = secAngle;
     update();
-
-    debugPrint(((secAngle * 180 / math.pi) / 6).toStringAsFixed(0));
+    _updateTime();
   }
 
   onSecPanUpdate(DragUpdateDetails details, Offset centerOfGestureDetector) {
@@ -60,6 +98,8 @@ class ClockController extends GetxController {
         details.localPosition - centerOfGestureDetector;
 
     secAngle = touchPositionFromCenter.direction + secAngleDelta;
+
+    secAngle = _limitTo60Tick(secAngle);
     update();
   }
 
@@ -73,7 +113,7 @@ class ClockController extends GetxController {
   onMinPanEnd() {
     minOldAngle = minAngle;
     update();
-    debugPrint('minute pan end $minAngle');
+    _updateTime();
   }
 
   onMinPanUpdate(DragUpdateDetails details, Offset centerOfGestureDetector) {
@@ -81,6 +121,7 @@ class ClockController extends GetxController {
         details.localPosition - centerOfGestureDetector;
 
     minAngle = touchPositionFromCenter.direction + minAngleDelta;
+    minAngle = _limitTo60Tick(minAngle);
     update();
   }
 
@@ -94,7 +135,7 @@ class ClockController extends GetxController {
   onHourPanEnd() {
     hourOldAngle = hourAngle;
     update();
-    debugPrint('hour pan end $hourAngle');
+    _updateTime();
   }
 
   onHourPanUpdate(DragUpdateDetails details, Offset centerOfGestureDetector) {
@@ -102,6 +143,7 @@ class ClockController extends GetxController {
         details.localPosition - centerOfGestureDetector;
 
     hourAngle = touchPositionFromCenter.direction + hourAngleDelta;
+    hourAngle = _limitTo12Tick(hourAngle);
     update();
   }
 }

@@ -17,8 +17,8 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             children: [
               Clock(
-                onTimeUpdate: (p0) {
-                  debugPrint(p0.toString());
+                onTimeUpdate: (hour, minute, second) {
+                  debugPrint('hour: $hour, minute: $minute, second: $second');
                 },
               ),
             ],

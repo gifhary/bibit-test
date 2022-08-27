@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 
 class Clock extends StatelessWidget {
-  final Function(DateTime) onTimeUpdate;
+  final Function(int hour, int minute, int second) onTimeUpdate;
   const Clock({Key? key, required this.onTimeUpdate}) : super(key: key);
 
   @override
