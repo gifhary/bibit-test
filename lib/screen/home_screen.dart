@@ -18,22 +18,52 @@ class HomeScreen extends StatelessWidget {
             ),
             body: Padding(
               padding: const EdgeInsets.all(30),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Clock(
-                      onTimeUpdate: controller.onTimeUpdate,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Clock(
+                    onTimeUpdate: controller.onTimeUpdate,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 42),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '${controller.hour}:${controller.minute}:${controller.second}',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 24),
+                        ),
+                        const SizedBox(width: 24),
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: controller.isAm ? null : Colors.white),
+                            onPressed: () => controller.updateIsAm(true),
+                            child: Text('AM',
+                                style: TextStyle(
+                                    color: controller.isAm
+                                        ? Colors.white
+                                        : Colors.black))),
+                        const SizedBox(width: 12),
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: controller.isAm ? Colors.white : null),
+                            onPressed: () => controller.updateIsAm(false),
+                            child: Text('PM',
+                                style: TextStyle(
+                                    color: controller.isAm
+                                        ? Colors.black
+                                        : Colors.white)))
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 42),
-                      child: Text(
-                        '${controller.hour}:${controller.minute}:${controller.second} ${controller.isAm ? 'AM' : 'PM'}',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 24),
-                      ),
-                    )
-                  ],
-                ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                        onPressed: controller.setAlarm,
+                        child: const Text('SET ALARM')),
+                  )
+                ],
               ),
             ),
           );
