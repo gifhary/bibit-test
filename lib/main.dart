@@ -1,5 +1,7 @@
-import 'package:bibit_clock/screen/home_screen.dart';
+import 'package:bibit_clock/route/app_route.dart';
+import 'package:bibit_clock/route/route_constant.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,15 +11,12 @@ class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
+    return GetMaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
-          child: child!),
-      home: const HomeScreen(),
+      getPages: AppRute.all,
+      initialRoute: RouteConstant.home,
     );
   }
 }

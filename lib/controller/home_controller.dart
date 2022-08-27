@@ -1,3 +1,4 @@
+import 'package:bibit_clock/route/route_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -51,10 +52,19 @@ class HomeController extends GetxController {
     const ios = IOSInitializationSettings();
     const settings = InitializationSettings(android: android, iOS: ios);
 
+    //init notification object with function where to go when notif is tapped
     await _notif.initialize(
       settings,
       onSelectNotification: (payload) {
-        debugPrint('hehehe');
+        //notification payload is the time alarm fired converted to epoch time in milisecond
+        //since pyload only accept string, we will double convert it to dateTime
+        int? payloadInInt = int.tryParse(payload ?? '');
+
+        DateTime? dateTime = payloadInInt != null
+            ? DateTime.fromMillisecondsSinceEpoch(payloadInInt)
+            : null;
+
+        Get.toNamed(RouteConstant.chart, arguments: dateTime);
       },
     );
   }
@@ -68,19 +78,23 @@ class HomeController extends GetxController {
       debugPrint('current time $now');
       debugPrint('set to $dateTime');
 
+      //if alarm is set to past time, it will throw error message
       if (!dateTime.isAfter(now)) throw 'Please select future time';
 
+      //notification payload is the time alarm fired converted to epoch time in milisecond
       await _scheduleNotification(
           title: 'Alarm Test',
           body:
               'Alarm for ${DateFormat('HH:mm:ss').format(dateTime)} is activated',
-          payload: 'payload',
+          payload: dateTime.millisecondsSinceEpoch.toString(),
           time: dateTime);
 
+      //a message to show if alarm is set correctly
       Fluttertoast.showToast(
           msg: 'Alarm is set ${timeago.format(dateTime, allowFromNow: true)}',
           toastLength: Toast.LENGTH_LONG);
     } catch (e) {
+      //message when error
       Fluttertoast.showToast(msg: e.toString());
     }
   }
@@ -93,12 +107,14 @@ class HomeController extends GetxController {
       required DateTime time}) async {
     _notif.zonedSchedule(id, title, body, tz.TZDateTime.from(time, tz.local),
         await _notifDetails(),
+        payload: payload,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         androidAllowWhileIdle: true);
   }
 
   static Future _notifDetails() async {
+    //some paremeters can be put random string for this test
     return const NotificationDetails(
       android: AndroidNotificationDetails('channelId', 'channelName',
           channelDescription: 'channelDesc', importance: Importance.max),
