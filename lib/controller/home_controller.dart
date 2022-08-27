@@ -22,6 +22,7 @@ class HomeController extends GetxController {
 
     _initNotif();
     tz.initializeTimeZones();
+    _checkIfAppIsOpennedByNotif();
 
     final now = DateTime.now();
     hour = now.hour > 12 ? (now.hour % 12) : now.hour;
@@ -30,6 +31,15 @@ class HomeController extends GetxController {
 
     if (now.hour > 12) {
       isAm = false;
+    }
+  }
+
+  _checkIfAppIsOpennedByNotif() async {
+    //notification tap handling when app is closed
+    final notificationAppLaunchDetails = await FlutterLocalNotificationsPlugin()
+        .getNotificationAppLaunchDetails();
+    if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
+      _goToChartScreen(notificationAppLaunchDetails?.payload ?? '');
     }
   }
 
@@ -47,25 +57,28 @@ class HomeController extends GetxController {
     update();
   }
 
+  _goToChartScreen(String payload) {
+    //notification payload is the time alarm fired converted to epoch time in milisecond
+    //since pyload only accept string, we will double convert it to dateTime
+    int? payloadInInt = int.tryParse(payload);
+
+    DateTime? dateTime = payloadInInt != null
+        ? DateTime.fromMillisecondsSinceEpoch(payloadInInt)
+        : null;
+
+    Get.toNamed(RouteConstant.chart, arguments: dateTime);
+  }
+
   Future _initNotif() async {
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
     const ios = IOSInitializationSettings();
     const settings = InitializationSettings(android: android, iOS: ios);
 
     //init notification object with function where to go when notif is tapped
+    //onSelectNotification handles what to do when notif is tapped, it doesnt work when app is closed
     await _notif.initialize(
       settings,
-      onSelectNotification: (payload) {
-        //notification payload is the time alarm fired converted to epoch time in milisecond
-        //since pyload only accept string, we will double convert it to dateTime
-        int? payloadInInt = int.tryParse(payload ?? '');
-
-        DateTime? dateTime = payloadInInt != null
-            ? DateTime.fromMillisecondsSinceEpoch(payloadInInt)
-            : null;
-
-        Get.toNamed(RouteConstant.chart, arguments: dateTime);
-      },
+      onSelectNotification: (payload) => _goToChartScreen(payload ?? ''),
     );
   }
 
