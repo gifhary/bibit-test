@@ -101,6 +101,9 @@ class ClockController extends GetxController {
 
     secAngle = _limitTo60Tick(secAngle);
     update();
+    //this still can be improved to only refresh widget when the clock hands changed to different exact value
+    //for now it'll refresh even the hands only moved a single pixel.
+    //same for minute and hour
   }
 
 //minute drag functions
