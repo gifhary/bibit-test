@@ -99,11 +99,14 @@ class ClockController extends GetxController {
 
     secAngle = touchPositionFromCenter.direction + secAngleDelta;
 
-    secAngle = _limitTo60Tick(secAngle);
-    update();
-    //this still can be improved to only refresh widget when the clock hands changed to different exact value
-    //for now it'll refresh even the hands only moved a single pixel.
-    //same for minute and hour
+    //this condition improves efficiency, so the widget wont refresh every pixel clock hand dragged
+    //only update when the clock hands is dragged close (in this case, smaller than 2 degree) to the next tick.
+    //smaller number will reduce widget redundant refresh count, but if the number is too small, dragging
+    //can skip one or more tick when dragged
+    if ((secAngle * 180 / math.pi) % 6 < 2) {
+      secAngle = _limitTo60Tick(secAngle);
+      update();
+    }
   }
 
 //minute drag functions
@@ -124,8 +127,11 @@ class ClockController extends GetxController {
         details.localPosition - centerOfGestureDetector;
 
     minAngle = touchPositionFromCenter.direction + minAngleDelta;
-    minAngle = _limitTo60Tick(minAngle);
-    update();
+
+    if ((minAngle * 180 / math.pi) % 6 < 2) {
+      minAngle = _limitTo60Tick(minAngle);
+      update();
+    }
   }
 
   //hour drag functions
@@ -146,7 +152,11 @@ class ClockController extends GetxController {
         details.localPosition - centerOfGestureDetector;
 
     hourAngle = touchPositionFromCenter.direction + hourAngleDelta;
-    hourAngle = _limitTo12Tick(hourAngle);
-    update();
+
+    if ((hourAngle * 180 / math.pi) % 30 < 3) {
+      hourAngle = _limitTo12Tick(hourAngle);
+      debugPrint('updated');
+      update();
+    }
   }
 }
